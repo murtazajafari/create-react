@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {lazy, startTransition, Suspense, useState} from 'react';
+import './App.css'
+// 1. Import
+// import("./math").then(math => {
+//     console.log(math.add(16, 26));
+// });
+
+
+// 2. React.Lazy 
+// Error boundry comes first 
+import MyErrorBoundary from './MyErrorBoundary';
+
+const Photos = lazy(()=> import('./Photos'));
+const Comments = lazy(()=> import('./Comments'));
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [tab, setTab] = useState('Comments');
+    const [button, setButton] = useState(false);
+
+    function clickHandler(e){
+
+        startTransition(() => {
+            setTab(e.target.name);        
+            setButton(!button);               
+        })
+    }
+    return (
+        <div className={`App ${button ? 'night': 'day'}`}>
+            <MyErrorBoundary>
+                <Suspense fallback={<div>Loading</div>}>
+                    {tab == 'Photos' ? <Photos/> : <Comments/>}
+                </Suspense>
+            </MyErrorBoundary>
+
+            <br />
+            <button onClick={(e) => clickHandler(e)} name={button ? 'Comment': 'Photos'}>Switch</button>
+
+        </div>
+    );
 }
 
 export default App;
