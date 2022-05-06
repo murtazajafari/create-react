@@ -1,42 +1,45 @@
-import React, {createContext, Component} from 'react';
+import React, { Component} from 'react';
 import './App.css'
+import {ThemeContext, themes} from './theme-context'
+import ThemeButton from './theme-button';
 
 
-const ThemeContext = createContext('white');
-
-function App() {
+function Toolbar (props) {
     return (
-        <div className="App">
-           <ThemeContext.Provider value='dark'>
-
-               <Toolbar />
-
-           </ThemeContext.Provider>
-        </div>
-    );
-}
-
-function Toolbar() {
-    return (
-        <div>
-            <h1>Toolbar</h1>
-            <ButtonTheme/>
-        </div>
+        <ThemeButton onClick={props.changeBackground}>
+            Change background
+        </ThemeButton>
     )
 }
 
-class ButtonTheme extends Component {
-    static contextType = ThemeContext
+
+export default class App extends Component {
+    constructor(props) {
+      super(props)
+    
+      this.state = {
+         theme: themes.light
+      }
+
+      this.toggleTheme = () => {
+          this.setState(prevState => ({
+              theme: prevState.theme === themes.dark ? themes.light : themes.dark
+          }))
+      }
+    }
+
     
     render() {
         return (
-            <div>
-                <h1>ButtonTheme</h1>
-                <h3>Hello world  {this.context}</h3>
+            <div className='App'>
+                <ThemeContext.Provider value={this.state.theme}>
+                    <Toolbar changeBackground={this.toggleTheme}  />
+                </ThemeContext.Provider>
+
+                <ThemeButton />
             </div>
         )
     }
 }
 
 
-export default App;
