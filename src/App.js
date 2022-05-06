@@ -1,42 +1,42 @@
-import React, {lazy, startTransition, Suspense, useState} from 'react';
+import React, {createContext, Component} from 'react';
 import './App.css'
-// 1. Import
-// import("./math").then(math => {
-//     console.log(math.add(16, 26));
-// });
 
 
-// 2. React.Lazy 
-// Error boundry comes first 
-import MyErrorBoundary from './MyErrorBoundary';
-
-const Photos = lazy(()=> import('./Photos'));
-const Comments = lazy(()=> import('./Comments'));
+const ThemeContext = createContext('white');
 
 function App() {
-    const [tab, setTab] = useState('Comments');
-    const [button, setButton] = useState(false);
-
-    function clickHandler(e){
-
-        startTransition(() => {
-            setTab(e.target.name);        
-            setButton(!button);               
-        })
-    }
     return (
-        <div className={`App ${button ? 'night': 'day'}`}>
-            <MyErrorBoundary>
-                <Suspense fallback={<div>Loading</div>}>
-                    {tab == 'Photos' ? <Photos/> : <Comments/>}
-                </Suspense>
-            </MyErrorBoundary>
+        <div className="App">
+           <ThemeContext.Provider value='dark'>
 
-            <br />
-            <button onClick={(e) => clickHandler(e)} name={button ? 'Comment': 'Photos'}>Switch</button>
+               <Toolbar />
 
+           </ThemeContext.Provider>
         </div>
     );
 }
+
+function Toolbar() {
+    return (
+        <div>
+            <h1>Toolbar</h1>
+            <ButtonTheme/>
+        </div>
+    )
+}
+
+class ButtonTheme extends Component {
+    static contextType = ThemeContext
+    
+    render() {
+        return (
+            <div>
+                <h1>ButtonTheme</h1>
+                <h3>Hello world  {this.context}</h3>
+            </div>
+        )
+    }
+}
+
 
 export default App;
